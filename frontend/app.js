@@ -1,7 +1,7 @@
-// API URL - dynamic for production
-const API_URL = window.location.hostname === 'localhost' 
-  ? 'http://localhost:5000/api' 
-  : `${window.location.protocol}//${window.location.host}/api`;
+// API URL - routes to localhost in development, backend private domain in production
+const API_URL = window.location.hostname === 'localhost'
+  ? 'http://localhost:5000/api'
+  : 'http://web.railway.internal:5000/api';
 
 let token = localStorage.getItem('token');
 let currentUser = null;
