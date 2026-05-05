@@ -23,8 +23,11 @@ app.use(express.static(frontendPath));
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI || process.env.MONGO_URL || 'mongodb://localhost:27017/project-management')
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.log('MongoDB connection error:', err));
+  .then(() => console.log('✅ MongoDB connected'))
+  .catch(err => {
+    console.error('❌ MongoDB connection error:', err.message);
+    console.error('Connection string:', process.env.MONGODB_URI || process.env.MONGO_URL || 'mongodb://localhost:27017/project-management');
+  });
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
@@ -34,7 +37,12 @@ app.use('/api/users', require('./routes/users'));
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'Server is running' });
+  const dbConnected = mongoose.connection.readyState === 1;
+  res.json({ 
+    status: 'Server is running',
+    database: dbConnected ? 'connected' : 'disconnected',
+    mongoState: mongoose.connection.readyState
+  });
 });
 
 // Serve frontend index.html for all non-API routes (SPA)

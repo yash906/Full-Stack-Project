@@ -51,8 +51,16 @@ router.post('/signup', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Server error' });
+    console.error('Signup error:', error.message, error);
+    // Return more specific error messages
+    if (error.name === 'ValidationError') {
+      const messages = Object.values(error.errors).map(err => err.message);
+      return res.status(400).json({ error: messages.join(', ') });
+    }
+    if (error.code === 11000) {
+      return res.status(400).json({ error: 'Email already exists' });
+    }
+    res.status(500).json({ error: error.message || 'Server error' });
   }
 });
 
