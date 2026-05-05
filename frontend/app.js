@@ -1,7 +1,7 @@
-// API URL - routes to localhost in development, backend private domain in production
+// API URL - routes to localhost in development, same origin in production
 const API_URL = window.location.hostname === 'localhost'
   ? 'http://localhost:5000/api'
-  : 'http://web.railway.internal:5000/api';
+  : window.location.origin + '/api';
 
 let token = localStorage.getItem('token');
 let currentUser = null;
