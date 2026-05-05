@@ -30,12 +30,14 @@ function clearAuthInputs() {
     document.getElementById('signupName').value = '';
     document.getElementById('signupEmail').value = '';
     document.getElementById('signupPassword').value = '';
+    document.getElementById('signupAdmin').checked = false;
 }
 
 async function signup() {
     const name = document.getElementById('signupName').value;
     const email = document.getElementById('signupEmail').value;
     const password = document.getElementById('signupPassword').value;
+    const isAdmin = document.getElementById('signupAdmin').checked;
 
     if (!name || !email || !password) {
         alert('Please fill all fields');
@@ -46,7 +48,7 @@ async function signup() {
         const response = await fetch(`${API_URL}/auth/signup`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, email, password })
+            body: JSON.stringify({ name, email, password, isAdmin })
         });
 
         const data = await response.json();
