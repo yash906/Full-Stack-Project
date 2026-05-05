@@ -1,7 +1,12 @@
-// API URL - routes to localhost in development, same origin in production
-const API_URL = window.location.hostname === 'localhost'
-  ? 'http://localhost:5000/api'
-  : window.location.origin + '/api';
+// API URL - configure based on environment
+let API_URL;
+if (window.location.hostname === 'localhost') {
+    API_URL = 'http://localhost:5000/api';
+} else {
+    // For production on Railway with separate frontend/backend
+    const BACKEND_URL = 'https://web-production-4f129.up.railway.app';
+    API_URL = BACKEND_URL + '/api';
+}
 
 let token = localStorage.getItem('token');
 let currentUser = null;
