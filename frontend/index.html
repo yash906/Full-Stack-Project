@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Management App</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="authSection" class="auth-container">
+        <div class="auth-card">
+            <h1>Project Manager</h1>
+            <p class="subtitle">Manage your projects and tasks efficiently</p>
+
+            <div id="loginForm" class="auth-form active">
+                <h2>Login</h2>
+                <input type="email" id="loginEmail" placeholder="Email" required>
+                <input type="password" id="loginPassword" placeholder="Password" required>
+                <button onclick="login()">Login</button>
+                <p>Don't have an account? <a href="#" onclick="toggleAuthForm()">Sign up</a></p>
+            </div>
+
+            <div id="signupForm" class="auth-form">
+                <h2>Sign Up</h2>
+                <input type="text" id="signupName" placeholder="Full Name" required>
+                <input type="email" id="signupEmail" placeholder="Email" required>
+                <input type="password" id="signupPassword" placeholder="Password (min 6 chars)" required>
+                <button onclick="signup()">Sign Up</button>
+                <p>Already have an account? <a href="#" onclick="toggleAuthForm()">Login</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="appSection" class="app-container" style="display: none;">
+        <nav class="navbar">
+            <div class="nav-content">
+                <h1>Project Manager</h1>
+                <div class="nav-right">
+                    <span id="userEmail" class="user-email"></span>
+                    <button onclick="logout()" class="logout-btn">Logout</button>
+                </div>
+            </div>
+        </nav>
+
+        <div class="sidebar">
+            <div class="sidebar-menu">
+                <button class="menu-btn active" onclick="showPage('dashboard')">Dashboard</button>
+                <button class="menu-btn" onclick="showPage('projects')">Projects</button>
+                <button class="menu-btn" onclick="showPage('tasks')">Tasks</button>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div id="dashboardPage" class="page active">
+                <h2>Dashboard</h2>
+                <div id="statsContainer" class="stats-grid"></div>
+                <div class="overdue-section">
+                    <h3>Overdue Tasks</h3>
+                    <div id="overdueTasksList" class="tasks-list"></div>
+                </div>
+            </div>
+
+            <div id="projectsPage" class="page">
+                <div class="page-header">
+                    <h2>Projects</h2>
+                    <button onclick="showCreateProjectModal()" class="btn btn-primary">+ New Project</button>
+                </div>
+                <div id="projectsList" class="projects-grid"></div>
+            </div>
+
+            <div id="tasksPage" class="page">
+                <div class="page-header">
+                    <h2>Tasks</h2>
+                    <select id="projectFilter" onchange="loadTasks()" class="filter-select">
+                        <option value="">All Projects</option>
+                    </select>
+                </div>
+                <div id="tasksList" class="tasks-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="projectModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('projectModal')">&times;</span>
+            <h2>Create New Project</h2>
+            <form onsubmit="createProject(event)">
+                <input type="text" id="projectName" placeholder="Project Name" required>
+                <textarea id="projectDescription" placeholder="Project Description"></textarea>
+                <button type="submit" class="btn btn-primary">Create Project</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="taskModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('taskModal')">&times;</span>
+            <h2>Create New Task</h2>
+            <form onsubmit="createTask(event)">
+                <input type="text" id="taskTitle" placeholder="Task Title" required>
+                <textarea id="taskDescription" placeholder="Task Description"></textarea>
+                <select id="taskProject" required>
+                    <option value="">Select Project</option>
+                </select>
+                <select id="taskAssignee">
+                    <option value="">Assign To (Optional)</option>
+                </select>
+                <input type="date" id="taskDueDate">
+                <select id="taskPriority">
+                    <option value="Medium">Priority: Medium</option>
+                    <option value="Low">Priority: Low</option>
+                    <option value="High">Priority: High</option>
+                </select>
+                <button type="submit" class="btn btn-primary">Create Task</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="editTaskModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('editTaskModal')">&times;</span>
+            <h2>Edit Task</h2>
+            <form onsubmit="updateTask(event)">
+                <input type="text" id="editTaskTitle" placeholder="Task Title" required>
+                <textarea id="editTaskDescription" placeholder="Task Description"></textarea>
+                <select id="editTaskStatus">
+                    <option value="To Do">To Do</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                </select>
+                <select id="editTaskPriority">
+                    <option value="Low">Priority: Low</option>
+                    <option value="Medium">Priority: Medium</option>
+                    <option value="High">Priority: High</option>
+                </select>
+                <input type="date" id="editTaskDueDate">
+                <button type="submit" class="btn btn-primary">Update Task</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="projectDetailsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('projectDetailsModal')">&times;</span>
+            <h2 id="projectDetailTitle"></h2>
+            <p id="projectDetailDesc"></p>
+            <div id="projectMembers" class="members-list"></div>
+            <div class="modal-actions">
+                <button onclick="showAddMemberForm()" class="btn btn-secondary">Add Member</button>
+                <button onclick="showProjectTasks()" class="btn btn-secondary">View Tasks</button>
+                <button onclick="deleteProject()" class="btn btn-danger">Delete Project</button>
+            </div>
+            <div id="addMemberForm" style="display: none; margin-top: 20px;">
+                <select id="memberSelect">
+                    <option value="">Select User</option>
+                </select>
+                <button onclick="addMember()" class="btn btn-primary">Add</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
