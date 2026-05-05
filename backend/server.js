@@ -33,7 +33,11 @@ app.get('/api/health', (req, res) => {
 
 // Serve frontend index.html for all non-API routes (SPA)
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/index.html'));
+  res.sendFile(path.join(__dirname, '../frontend/index.html'), (err) => {
+    if (err) {
+      res.status(404).json({ error: 'Frontend file not found' });
+    }
+  });
 });
 
 // Error handling middleware
