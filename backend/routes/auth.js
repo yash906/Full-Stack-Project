@@ -8,7 +8,7 @@ const router = express.Router();
 // Signup
 router.post('/signup', async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, isAdmin } = req.body;
 
     // Validation
     if (!name || !email || !password) {
@@ -30,7 +30,7 @@ router.post('/signup', async (req, res) => {
       name,
       email,
       password,
-      role: 'Member'
+      role: isAdmin ? 'Admin' : 'Member'
     });
 
     await user.save();
